@@ -3,10 +3,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import argparse
 
 print("Bin Day Scraper")
 
+import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--postcode", required=True)
 parser.add_argument("-n", "--number", required=True)

@@ -40,7 +40,9 @@ jobs:
         HOUSENO: ${{ secrets.HOUSENO }}
         POSTCODE: ${{ secrets.POSTCODE }}
       run: |
+        echo "Running script..."
         python bins.py -n "$HOUSENO" -p "$POSTCODE"
+        echo "Script done."
     - name: Store json
       uses: actions/upload-artifact@v4
       with:
