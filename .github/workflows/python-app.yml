@@ -41,3 +41,8 @@ jobs:
         POSTCODE: ${{ secrets.POSTCODE }}
       run: |
         python bins.py -n "$HOUSENO" -p "$POSTCODE"
+    - name: Store json
+      uses: actions/upload-artifact@v4
+      with:
+        name: bin json
+        path: bins.json
