@@ -22,11 +22,14 @@ jobs:
         python-version: "3.10"
     - name: Install dependencies (chrome, chromedriver, selenium)
       run: |
-        sudo apt update
-        wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chrome-linux64.zip
-        sudo dpkg -i google-chrome-stable_current_amd64.deb
-        sudo apt-get install -f
-        wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chromedriver-linux64.zip
+        #sudo apt update
+        wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chrome-linux64.zip
+        unzip chrome-linux64.zip
+        sudo mv chrome-linux64/chrome /usr/bin/chrome
+        sudo chown root:root /usr/bin/chrome
+        sudo chmod +x /usr/bin/chrome
+
+        wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chromedriver-linux64.zip
         unzip chromedriver-linux64.zip
         sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
         sudo chown root:root /usr/bin/chromedriver
