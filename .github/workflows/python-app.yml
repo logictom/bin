@@ -33,7 +33,7 @@ jobs:
         sudo chmod +x /usr/bin/chromedriver
 
         python -m pip install --upgrade pip
-        pip install selenium
+        pip install selenium gcsa
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run the script!
       env:
@@ -48,3 +48,16 @@ jobs:
       with:
         name: bin json
         path: bins.json
+
+    - name: Add to calendar!
+      env:
+        CRED: ${{ secrets.CRED }}
+        TOKEN: ${{ secrets.TOKEN }}
+        CALID: ${{ secrets.CALID }}
+      run: |
+        echo "Create files"
+        echo "$CRED" > credentials.json
+        echo "$TOKEN" > token.json
+        echo "Running script..."
+        python caltest.py -i "$CALID"
+        echo "Script done."
