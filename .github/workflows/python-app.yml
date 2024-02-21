@@ -23,10 +23,10 @@ jobs:
     - name: Install dependencies (chrome, chromedriver, selenium)
       run: |
         sudo apt update
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chrome-linux64.zip
         sudo dpkg -i google-chrome-stable_current_amd64.deb
         sudo apt-get install -f
-        wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/121.0.6167.85/linux64/chromedriver-linux64.zip
+        wget https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chromedriver-linux64.zip
         unzip chromedriver-linux64.zip
         sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
         sudo chown root:root /usr/bin/chromedriver
