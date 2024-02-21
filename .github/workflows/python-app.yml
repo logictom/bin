@@ -43,6 +43,7 @@ jobs:
         HOUSENO: ${{ secrets.HOUSENO }}
         POSTCODE: ${{ secrets.POSTCODE }}
       run: |
+        PATH=$(echo "$PATH" | sed -e 's/:\/usr\/bin\/google-chrome$//')
         echo "Running script..."
         python bins.py -n "$HOUSENO" -p "$POSTCODE"
         echo "Script done."
