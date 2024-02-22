@@ -60,8 +60,9 @@ jobs:
         CALID: ${{ secrets.CALID }}
       run: |
         echo "Create files"
-        echo "$CRED" > credentials.json
-        echo "$TOKEN" > token.json
+        mkdir ~/.credentials
+        echo "$CRED" > ~/.credentials/credentials.json
+        echo "$TOKEN" > ~/.credentials/token.json
         echo "Running script..."
         python caltest.py -i "$CALID"
         echo "Script done."
