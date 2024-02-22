@@ -22,16 +22,19 @@ jobs:
         python-version: "3.10"
     - name: Install dependencies (chrome, chromedriver, selenium)
       run: |
-        #sudo apt update
-        wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chrome-linux64.zip
-        unzip chrome-linux64.zip
-        sudo mv chrome-linux64 /opt/chrome
-        sudo chown root:root /opt/chrome/chrome
-        sudo rm /usr/bin/google-chrome
-        sudo ln /opt/chrome/chrome /usr/bin/chrome
-        sudo chmod +x /usr/bin/chrome
+        sudo apt-get update
+        sudo apt-cache policy chrome
+        sudo apt-get install chrome:121.0.6167.184-1
+        # wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chrome-linux64.zip
+        # unzip chrome-linux64.zip
+        # sudo mv chrome-linux64 /opt/chrome
+        # sudo chown root:root /opt/chrome/chrome
+        # sudo rm /usr/bin/google-chrome
+        # sudo ln /opt/chrome/chrome /usr/bin/chrome
+        # sudo chmod +x /usr/bin/chrome
 
-        wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chromedriver-linux64.zip
+        #wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.57/linux64/chromedriver-linux64.zip
+        wget -q https://storage.googleapis.com/chrome-for-testing-public/122.0.6261.5/linux64/chromedriver-linux64.zip
         unzip chromedriver-linux64.zip
         sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
         sudo chown root:root /usr/bin/chromedriver
