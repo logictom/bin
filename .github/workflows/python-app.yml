@@ -60,9 +60,22 @@ jobs:
         CALID: ${{ secrets.CALID }}
       run: |
         echo "Create files"
+        echo "Currently here:"
+        pwd
+        echo "Moving to ~"
+        pwd
+        echo "Echo what's here?"
+        ls -lah
+        echo "Creating cred file"
         mkdir ~/.credentials
+        ls -lah
         echo "$CRED" > ~/.credentials/credentials.json
         echo "$TOKEN" > ~/.credentials/token.json
+        echo "What's in ~/.creds:"
+        ls -lah ~/.credentials
+        echo "What's in /home/runner/.credentials"
+        cd /home/runner/.credentials
+        ls -lah
         echo "Running script..."
         python caltest.py -i "$CALID"
         echo "Script done."
