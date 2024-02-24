@@ -11,9 +11,10 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    timeout-minutes: 3    
+    env:
+      PYTHONUNBUFFERED: "1"
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -59,14 +60,9 @@ jobs:
         TOKEN: ${{ secrets.TOKEN }}
         CALID: ${{ secrets.CALID }}
       run: |
-        echo "Create folder & files"
-        mkdir ~/.credentials
-        echo "$CRED" > ~/.credentials/credentials.json
-        echo "$TOKEN" > ~/.credentials/token.json
-        echo "What's in ~/.creds:"
-        ls -lah ~/.credentials
-        echo "What's in /home/runner/.credentials"
-        ls -lah /home/runner/.credentials
-        echo "Running script..."
-        python caltest.py -i "$CALID"
+        pip install gcsa
+        echo "$CRED" > credentials.json
+        echo -n "$TOKEN" | python pickler.py
+        echo "Created files, running script"
+        python -u caltest.py -i $CALID -f bins.json
         echo "Script done."

@@ -83,21 +83,22 @@ import datetime
 today = datetime.date.today()
 year = today.year
 
+
 from datetime import datetime
 
 txt = table.text
 month = ""
-op = '{"processed":"'
-op = op + str(today) +'","bins":{'
+op = '{"processeddate":"'
+op = op + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'","bins":['
 first_month = None
 for i, line in enumerate(txt.splitlines()):
     if line[0].isdigit():
         [date, day, bin, *excess] = line.split(' ')
-        date_str = f"{year}-{month}-{date}"
-        date_format = '%Y-%m-%d'
+        date_str = f"{year}-{month}-{date} 7:00:00"
+        date_format = '%Y-%m-%d %H:%M:%S'
 
         date_obj = datetime.strptime(date_str, date_format)
-        op = op + f'"{date_obj}" : "{bin}",'
+        op = op + '{"date":' +f'"{date_obj}", "bin": "{bin}"' + "},"
     else:
         month = month_to_num[line]
         if first_month == None:
@@ -106,9 +107,14 @@ for i, line in enumerate(txt.splitlines()):
             if month < first_month:
                 year = year + 1
 op = op[:-1]
-op = op + "}}"
+op = op + "],"
 
-#print(op)
+date_str = f"{year}-{month}-{int(date)+1} 7:00:00"
+date_format = '%Y-%m-%d %H:%M:%S'
+date_obj = datetime.strptime(date_str, date_format)
+
+op = op + f'"triggerdate" : "{date_obj}"' + '}'
+
 print("Writing json file")
 with open("bins.json", mode="w") as f:
     f.write(op)
