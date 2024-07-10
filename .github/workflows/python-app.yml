@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-      description: 'Manual Run Tag'
-      required: false
-      type: boolean
+        description: 'Manual Run Tag'
+        required: false
+        type: boolean
   push:
     branches: [ "main" ]
   pull_request:
