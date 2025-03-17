@@ -30,7 +30,7 @@ jobs:
     - name: Install dependencies (chrome, chromedriver, selenium)
       run: |
         sudo apt-get update
-        CHROME_VERSION=122.0.6261.57
+        CHROME_VERSION=134.0.6998.88
         wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}-1_amd64.deb
         sudo apt-get install -y --allow-downgrades /tmp/chrome.deb
 
