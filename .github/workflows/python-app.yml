@@ -53,6 +53,7 @@ jobs:
         path: bins.json
 
     - name: Add to calendar!
+      if: github.ref == 'refs/heads/main'
       env:
         CRED: ${{ secrets.CRED }}
         TOKEN: ${{ secrets.TOKEN }}

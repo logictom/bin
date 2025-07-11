@@ -101,10 +101,11 @@ This repository includes a GitHub Actions workflow defined in `.github/workflows
     2.  Uses the `browser-actions/setup-chrome@latest` action to install the latest stable version of Google Chrome and the corresponding ChromeDriver. This ensures compatibility and simplifies the workflow.
     3.  Installs necessary Python libraries from `requirements.txt`.
     4.  Runs `bins.py` using `HOUSENO` and `POSTCODE` values stored as GitHub Secrets. The resulting `bins.json` is uploaded as a workflow artifact.
-    5.  Runs `caltest.py`:
+    5.  Runs `caltest.py` (this step **only runs on pushes to the `main` branch**):
         *   It recreates `credentials.json` from a `CRED` GitHub Secret.
         *   It recreates `token.pickle` from a `TOKEN` GitHub Secret (which should be the hex-encoded string of your `token.pickle` file) using `pickler.py`.
         *   It then updates the Google Calendar specified by the `CALID` GitHub Secret using the `bins.json` artifact.
+        *   Pull request builds and runs on other branches will execute up to the `bins.py` script and artifact storage, allowing for testing of the scraping logic without modifying the calendar.
 
 ### Required Secrets for GitHub Actions
 
