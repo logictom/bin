@@ -98,8 +98,8 @@ This repository includes a GitHub Actions workflow defined in `.github/workflows
 
 *   **Process**:
     1.  Sets up a Linux environment with Python 3.10.
-    2.  Installs Google Chrome and the corresponding ChromeDriver.
-    3.  Installs necessary Python libraries (`selenium`, `gcsa`, and others from `requirements.txt`).
+    2.  Uses the `browser-actions/setup-chrome@latest` action to install the latest stable version of Google Chrome and the corresponding ChromeDriver. This ensures compatibility and simplifies the workflow.
+    3.  Installs necessary Python libraries from `requirements.txt`.
     4.  Runs `bins.py` using `HOUSENO` and `POSTCODE` values stored as GitHub Secrets. The resulting `bins.json` is uploaded as a workflow artifact.
     5.  Runs `caltest.py`:
         *   It recreates `credentials.json` from a `CRED` GitHub Secret.
