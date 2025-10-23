@@ -46,7 +46,7 @@ driver.get('https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker
 print("Rejecting cookies")
 # Find the dumb cookies button that blocks us from proceeding
 element = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.NAME, value="rejectall"))
+    EC.presence_of_element_located((By.NAME, value=="rejectall"))
 )
 # reject_cookies_button = driver.find_element(by=By.NAME, value="rejectall")
 reject_cookies_button.click()
