@@ -3,6 +3,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 print("Bin Day Scraper")
 
@@ -38,14 +41,20 @@ driver.execute_cdp_cmd('Emulation.setTimezoneOverride', tz_params)
 print("Loading site")
 # Initial page with postcode search option
 driver.get('https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker')
-driver.implicitly_wait(5)
-text_box = driver.find_element(by=By.ID, value='BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPPOSTCODE') #.send_keys('NE216EZ')
-submit_button = driver.find_element(by=By.ID, value="BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPSEARCH")
+# driver.implicitly_wait(5)
+
 print("Rejecting cookies")
 # Find the dumb cookies button that blocks us from proceeding
-reject_cookies_button = driver.find_element(by=By.NAME, value="rejectall")
+element = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.NAME, value="rejectall"))
+)
+# reject_cookies_button = driver.find_element(by=By.NAME, value="rejectall")
 reject_cookies_button.click()
 print("Entering postcode")
+
+text_box = driver.find_element(by=By.ID, value='BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPPOSTCODE') #.send_keys('NE216EZ')
+submit_button = driver.find_element(by=By.ID, value="BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPSEARCH")
+
 # Add postcode to search box
 text_box.send_keys(postcode)
 submit_button.click()
