@@ -64,11 +64,11 @@ with SB(uc=True, test=True, locale="en-GB") as sb:
         print("Available options:")
         for opt in options:
             print(repr(opt))
-        raise Exception("No address option containing '41' was found")
+        raise Exception(f"No address option containing '{houseno}' was found")
 
     # 8. Script waits for the new table, bincollections__table, to load and selects the table contents and prints it to the console
     print("Waiting for bin collection table to load")
-    sb.wait_for_element("table.bincollections__table", timeout=15)
+    sb.wait_for_element("table.bincollections__table", timeout=25)
     table_text = sb.get_text("table.bincollections__table")
     print("Bin Collection Table:")
     print(table_text)
