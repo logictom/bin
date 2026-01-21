@@ -113,6 +113,22 @@ while i < len(lines):
     i += 1
 txt = '\n'.join(new_lines)
 
+# if line starts with a month name, move anything after the first space to the next line
+lines = txt.splitlines()
+new_lines = []
+for line in lines:
+    first_space = line.find(' ')
+    if first_space != -1:
+        first_word = line[:first_space]
+        if first_word in month_to_num:
+            new_lines.append(first_word)
+            new_lines.append(line[first_space + 1:].strip())
+        else:
+            new_lines.append(line)
+    else:
+        new_lines.append(line)
+txt = '\n'.join(new_lines)
+
 month = ""
 first_month = None
 
@@ -125,8 +141,6 @@ op = op + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'","bins":['
 for i, line in enumerate(txt.splitlines()):
     if line[0].isdigit():
         [date, bin, *excess] = line.split(' ')
-
-        # print(f"{date}:{month}:{year} : {bin}")
         date_str = f"{year}-{month}-{date} 7:00:00"
         date_format = '%Y-%m-%d %H:%M:%S'
         date_obj = datetime.strptime(date_str, date_format)
@@ -140,8 +154,6 @@ for i, line in enumerate(txt.splitlines()):
         else:
             if month < first_month:
                 year += 1
-        [x, date, bin, *excess] = line.split(' ')
-
 op = op[:-1]
 op = op + "],"
 
