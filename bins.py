@@ -77,8 +77,8 @@ with SB(uc=True, test=True, locale="en-GB") as sb:
     resulting_data = table_text
 
 
-    with open("Output.txt", "w") as text_file:
-        text_file.write(resulting_data)
+    # with open("Output.txt", "w") as text_file:
+    #     text_file.write(resulting_data)
 
 import calendar
 from datetime import datetime, date
@@ -89,9 +89,9 @@ month = month_to_num['January']
 today = date.today()
 year = today.year
 
-resulting_data = None
-with open('Output.txt', 'r') as file:
-    resulting_data = file.read()
+# resulting_data = None
+# with open('Output.txt', 'r') as file:
+#     resulting_data = file.read()
 txt = resulting_data
 
 # strip leading/trailing whitespace characters from each line and remove lines equal to "Thursday"
