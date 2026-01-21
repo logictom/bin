@@ -1,13 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.select import Select
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-
-print("Bin Day Scraper")
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -17,104 +7,141 @@ args = parser.parse_args()
 houseno = args.number
 postcode = args.postcode
 
-print("Launching Chrome")
-# Options so that we can run headless
-chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--log-level=3')
-driver = webdriver.Chrome(options=chrome_options)
+from seleniumbase import SB
+# 1. Python script to load this webpage using seleniumbase
+# https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker
+resulting_data = None
+with SB(uc=True, test=True, locale="en-GB") as sb:
+    url = "https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker"
+    sb.activate_cdp_mode(url)
+    # 2. Script then waits for the page to load
+    
+    # 3. Script should reject any cookies
+    print("Rejecting cookies")
+    sb.click('button[name="rejectall"]')
+    
+    # 4. Solve any captchas if presented
+    print("Solving captcha if present")
+    sb.solve_captcha()
+    
+    # 5. Script then enters this postcode: "NE21 6EZ" into the "BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPPOSTCODE" input 
+    print("Entering postcode")
+    sb.type('input#BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPPOSTCODE', postcode)
+    
 
-# Set location to UK/London
-params = {
-    "latitude": 51.507351,
-    "longitude": -0.127758,
-    "accuracy": 100
-}
-driver.execute_cdp_cmd("Page.setGeolocationOverride", params)
+    # 6. Click the "Find address" button
+    print("Submitting postcode")
+    sb.click('input#BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPSEARCH')
+    # sb.sleep(2)
 
-# Set Timezone to London
-tz_params = {'timezoneId': 'Europe/London'}
-driver.execute_cdp_cmd('Emulation.setTimezoneOverride', tz_params)
-print("Loading site")
-# Initial page with postcode search option
-driver.get('https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker')
-# driver.implicitly_wait(5)
-
-print("Rejecting cookies")
-# Find the dumb cookies button that blocks us from proceeding
-element = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.NAME, value="rejectall"))
-)
-# reject_cookies_button = driver.find_element(by=By.NAME, value="rejectall")
-reject_cookies_button.click()
-print("Entering postcode")
-
-text_box = driver.find_element(by=By.ID, value='BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPPOSTCODE') #.send_keys('NE216EZ')
-submit_button = driver.find_element(by=By.ID, value="BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPSEARCH")
-
-# Add postcode to search box
-text_box.send_keys(postcode)
-submit_button.click()
-print("Selecting house number")
-# Find the address drop down and select our address - though any would do!
-address_select = driver.find_element(by=By.ID, value="BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPADDRESS")
-select = Select(address_select)
-option_list = select.options
-
-opts_to_select = [o for o in option_list if houseno in o.text]
-my_option = opts_to_select[0]
-select.select_by_visible_text(my_option.text)
-
-print("Processing Results")
-# Grab the table with the collection data
-table = driver.find_element(By.CLASS_NAME, "bincollections__table")
-txt = table.text
-#print(txt)
-month = ""
-'''
-# Iterate and print out which bin on which date
-for i, line in enumerate(txt.splitlines()):
-    if line[0].isdigit():
-        [date, day, bin, *excess] = line.split(' ')
-        print(f"Putting the {bin} bin out on {day} the {date} of {month}")
+    # 7. Script then waits for the <select> element to appear and selects the address with the partial match "41"
+    select_id = "#BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPADDRESS"
+    print("Waiting for address select element")
+    sb.wait_for_element(select_id, timeout=15)
+    print("Waiting for address options to populate")
+    sb.wait_for_element(select_id + " option", timeout=15)
+    # Try to find an option that contains 'houseno' and select it by value
+    print(f"Scanning options for a match containing '{houseno}'")
+    options = sb.execute_script(
+        "return Array.from(document.querySelectorAll('" + select_id + " option')).map(function(o){return {t:o.textContent.trim(), v:o.value};});"
+    )
+    match = None
+    for opt in options:
+        if opt and isinstance(opt, dict) and 't' in opt and houseno in opt['t']:
+            match = opt
+            print("Match found:", match)
+            break
+    if match:
+        print(f"Selecting option: {match['t']}")
+        sb.select_option_by_value(select_id, match['v'])
+        print("Option selected")
+        sb.sleep(2)
+        #sb.assert_selected_option(select_id, match['t'])
+        print("Selection confirmed")
+        sb.sleep(2)
     else:
-        month = line
-        #print(f"Processing the month of {line}")
-'''
+        # Provide debug output of available options to help diagnosis
+        print("Available options:")
+        for opt in options:
+            print(repr(opt))
+        raise Exception("No address option containing '41' was found")
+
+    # 8. Script waits for the new table, bincollections__table, to load and selects the table contents and prints it to the console
+    print("Waiting for bin collection table to load")
+    sb.wait_for_element("table.bincollections__table", timeout=15)
+    table_text = sb.get_text("table.bincollections__table")
+    print("Bin Collection Table:")
+    print(table_text)
+    # 9. Finally, the script should close the browser
+    print("Test completed, closing browser")
+    resulting_data = table_text
+
+
+    with open("Output.txt", "w") as text_file:
+        text_file.write(resulting_data)
+
 import calendar
+from datetime import datetime, date
+
 month_to_num = {name: num for num, name in enumerate(calendar.month_name) if num}
 month = month_to_num['January']
 
-import datetime
-today = datetime.date.today()
+today = date.today()
 year = today.year
 
+resulting_data = None
+with open('Output.txt', 'r') as file:
+    resulting_data = file.read()
+txt = resulting_data
 
-from datetime import datetime
+# strip leading/trailing whitespace characters from each line and remove lines equal to "Thursday"
+txt = '\n'.join([line.strip() for line in txt.splitlines() if line.strip() != "Thursday"])
 
-txt = table.text
+# remove empty lines
+txt = '\n'.join([line for line in txt.splitlines() if line.strip() != ""])
+
+# if the line ends with a digit, move the next line to the end of the current line
+lines = txt.splitlines()
+new_lines = []
+i = 0
+while i < len(lines):
+    line = lines[i]
+    if line and line[-1].isdigit() and i + 1 < len(lines):
+        line = line + ' ' + lines[i + 1]
+        i += 1
+    new_lines.append(line)
+    i += 1
+txt = '\n'.join(new_lines)
+
 month = ""
+first_month = None
+
 op = '{"processeddate":"'
 op = op + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'","bins":['
-first_month = None
+
+op = '{"processeddate":"'
+op = op + datetime.now().strftime("%Y-%m-%d %H:%M:%S") +'","bins":['
+
 for i, line in enumerate(txt.splitlines()):
     if line[0].isdigit():
-        [date, day, bin, *excess] = line.split(' ')
+        [date, bin, *excess] = line.split(' ')
+
+        # print(f"{date}:{month}:{year} : {bin}")
         date_str = f"{year}-{month}-{date} 7:00:00"
         date_format = '%Y-%m-%d %H:%M:%S'
-
         date_obj = datetime.strptime(date_str, date_format)
         op = op + '{"date":' +f'"{date_obj}", "bin": "{bin}"' + "},"
+
     else:
-        month = month_to_num[line]
+        first = line.split(maxsplit=1)[0]
+        month = month_to_num[first]
         if first_month == None:
             first_month = month
         else:
             if month < first_month:
-                year = year + 1
+                year += 1
+        [x, date, bin, *excess] = line.split(' ')
+
 op = op[:-1]
 op = op + "],"
 
@@ -128,3 +155,5 @@ print("Writing json file")
 with open("bins.json", mode="w") as f:
     f.write(op)
 print("Done")
+
+
