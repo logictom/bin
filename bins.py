@@ -6,7 +6,7 @@ parser.add_argument("-n", "--number", required=True)
 args = parser.parse_args()
 houseno = args.number
 postcode = args.postcode
-
+long_timeout = 60
 from seleniumbase import SB
 # 1. Python script to load this webpage using seleniumbase
 # https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker
@@ -37,9 +37,9 @@ with SB(uc=True, test=True, locale="en-GB") as sb:
     # 7. Script then waits for the <select> element to appear and selects the address with the partial match "41"
     select_id = "#BINCOLLECTIONCHECKER_ADDRESSSEARCH_ADDRESSLOOKUPADDRESS"
     print("Waiting for address select element")
-    sb.wait_for_element(select_id, timeout=15)
+    sb.wait_for_element(select_id, timeout=long_timeout)
     print("Waiting for address options to populate")
-    sb.wait_for_element(select_id + " option", timeout=15)
+    sb.wait_for_element(select_id + " option", timeout=long_timeout)
     # Try to find an option that contains 'houseno' and select it by value
     print(f"Scanning options for a match containing '{houseno}'")
     options = sb.execute_script(
@@ -68,7 +68,7 @@ with SB(uc=True, test=True, locale="en-GB") as sb:
 
     # 8. Script waits for the new table, bincollections__table, to load and selects the table contents and prints it to the console
     print("Waiting for bin collection table to load")
-    sb.wait_for_element("table.bincollections__table", timeout=25)
+    sb.wait_for_element("table.bincollections__table", timeout=long_timeout)
     table_text = sb.get_text("table.bincollections__table")
     print("Bin Collection Table:")
     print(table_text)
