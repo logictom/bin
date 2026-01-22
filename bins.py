@@ -7,6 +7,7 @@ args = parser.parse_args()
 houseno = args.number
 postcode = args.postcode
 long_timeout = 60
+
 from seleniumbase import SB
 # 1. Python script to load this webpage using seleniumbase
 # https://www.gateshead.gov.uk/article/3150/Bin-collection-day-checker
