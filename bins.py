@@ -94,8 +94,9 @@ year = today.year
 #     resulting_data = file.read()
 txt = resulting_data
 
-# strip leading/trailing whitespace characters from each line and remove lines equal to "Thursday"
-txt = '\n'.join([line.strip() for line in txt.splitlines() if line.strip() != "Thursday"])
+# strip leading/trailing whitespace characters from each line and remove lines equal to any day names
+days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+txt = '\n'.join([line.strip() for line in txt.splitlines() if line.strip().capitalize() not in days])
 
 # remove empty lines
 txt = '\n'.join([line for line in txt.splitlines() if line.strip() != ""])
